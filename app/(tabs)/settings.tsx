@@ -24,7 +24,12 @@ export default function Settings() {
     {
       section: 'Account',
       items: [
-        { label: 'Profile Settings', icon: User, action: 'navigate' },
+        { 
+          label: 'Profile Settings', 
+          icon: User, 
+          action: 'navigate',
+          onPress: () => router.push('/profile-settings')
+        },
         { label: 'Privacy & Security', icon: Shield, action: 'navigate' },
       ]
     },
@@ -130,7 +135,9 @@ export default function Settings() {
       key={item.label} 
       style={styles.settingsItem}
       onPress={() => {
-        if (item.action === 'navigate') {
+        if (item.onPress) {
+          item.onPress();
+        } else if (item.action === 'navigate') {
           Alert.alert(
             item.label,
             'This feature would navigate to the respective settings page.',
