@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { ChevronLeft, ChevronRight, Climport { ChevronLeft, ChevronRight, Clock, Plus, Twitter, Instagram, Facebook, Linkedin, MoveHorizontal as MoreHorizontal, Trash2, CreditCard as Edit3, BadgeAlert as Alert } from 'lucide-react-native'alendar() {
+import { ChevronLeft, ChevronRight, Clock, Plus, Twitter, Instagram, Facebook, Linkedin } from 'lucide-react-native';
+import { useApp } from '../../contexts/AppContext';
+
+export default function Calendar() {
   const { state, dispatch } = useApp();
   const router = useRouter();
   
