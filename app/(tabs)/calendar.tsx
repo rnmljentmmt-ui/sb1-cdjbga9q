@@ -2,10 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { ChevronLeft, ChevronRight, Clock, Plus, Twitter, Instagram, Facebook, Linkedin } from 'lucide-react-native';
-import { useApp } from '@/contexts/AppContext';
-
-export default function Calendar() {
+import { ChevronLeft, ChevronRight, Climport { ChevronLeft, ChevronRight, Clock, Plus, Twitter, Instagram, Facebook, Linkedin, MoveHorizontal as MoreHorizontal, Trash2, CreditCard as Edit3, BadgeAlert as Alert } from 'lucide-react-native'alendar() {
   const { state, dispatch } = useApp();
   const router = useRouter();
   
@@ -118,6 +115,21 @@ export default function Calendar() {
     const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
     return getPostsForDate(date).length > 0;
   };
+  
+  const deletePost = (postId: string) => {
+    dispatch({ type: 'DELETE_POST', payload: postId });
+  };
+  
+  const editPost = (post: any) => {
+    // In a real app, you would navigate to compose with the post data
+    // For now, we'll show an alert
+    Alert.alert(
+      'Edit Post',
+      'This would open the compose screen with the post data pre-filled.',
+      [{ text: 'OK' }]
+    );
+  };
+  
   const days = getDaysInMonth(currentDate);
 
   return (
