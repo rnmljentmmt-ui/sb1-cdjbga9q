@@ -10,6 +10,13 @@ export default function Dashboard() {
   const { state } = useApp();
   const router = useRouter();
 
+  const formatNumber = (num: number) => {
+    if (num >= 1000) {
+      return `${(num / 1000).toFixed(1)}K`;
+    }
+    return num.toString();
+  };
+
   // Calculate real-time stats from actual data
   const stats = [
     { 
@@ -61,13 +68,6 @@ export default function Dashboard() {
     }
   };
   
-  const formatNumber = (num: number) => {
-    if (num >= 1000) {
-      return `${(num / 1000).toFixed(1)}K`;
-    }
-    return num.toString();
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
