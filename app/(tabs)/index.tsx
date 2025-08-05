@@ -6,16 +6,27 @@ import { TrendingUp, Calendar, Users, MessageCircle, Heart, Share2, Clock, Circl
 import { useApp } from '@/contexts/AppContext';
 import MetricCard from '@/components/MetricCard';
 
+function formatNumber(num: number) {
+  if (num >= 1000) {
+    return `${(num / 1000).toFixed(1)}K`;
+  }
+  return num.toString();
+}
+
+function getStatusIcon(status: string) {
+  switch (status) {
+    case 'scheduled':
+      return <CheckCircle2 size={16} color="#10B981" />;
+    case 'pending':
+      return <Clock size={16} color="#F59E0B" />;
+    default:
+      return <AlertCircle size={16} color="#EF4444" />;
+  }
+}
+
 export default function Dashboard() {
   const { state } = useApp();
   const router = useRouter();
-
-  const formatNumber = (num: number) => {
-    if (num >= 1000) {
-      return `${(num / 1000).toFixed(1)}K`;
-    }
-    return num.toString();
-  };
 
   // Calculate real-time stats from actual data
   const stats = [
@@ -51,22 +62,11 @@ export default function Dashboard() {
 
   // Get today's scheduled posts
   const today = new Date();
-  const todaysPosts = state.posts.filter(post => {
+  const todaysPosts = state.posts.filter(function(post) {
     if (!post.scheduledTime || post.status !== 'scheduled') return false;
     const postDate = new Date(post.scheduledTime);
     return postDate.toDateString() === today.toDateString();
   });
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'scheduled':
-        return <CheckCircle2 size={16} color="#10B981" />;
-      case 'pending':
-        return <Clock size={16} color="#F59E0B" />;
-      default:
-        return <AlertCircle size={16} color="#EF4444" />;
-    }
-  };
   
   return (
     <SafeAreaView style={styles.container}>
@@ -77,28 +77,30 @@ export default function Dashboard() {
         </View>
 
         <View style={styles.statsGrid}>
-          {stats.map((stat, index) => (
-            <TouchableOpacity 
-              key={index} 
-              style={styles.statCard}
-              onPress={() => router.push('/analytics')}
-            >
-              <MetricCard
-                title={stat.label}
-                value={stat.value}
-                change={stat.change}
-                changeType={stat.change.startsWith('+') ? 'positive' : 'negative'}
-                icon={stat.icon}
-                color={stat.color}
-              />
-            </TouchableOpacity>
-          ))}
+          {stats.map(function(stat, index) {
+            return (
+              <TouchableOpacity 
+                key={index} 
+                style={styles.statCard}
+                onPress={function() { router.push('/analytics'); }}
+              >
+                <MetricCard
+                  title={stat.label}
+                  value={stat.value}
+                  change={stat.change}
+                  changeType={stat.change.startsWith('+') ? 'positive' : 'negative'}
+                  icon={stat.icon}
+                  color={stat.color}
+                />
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Today's Schedule</Text>
-            <TouchableOpacity onPress={() => router.push('/calendar')}>
+            <TouchableOpacity onPress={function() { router.push('/calendar'); }}>
               <Text style={styles.viewAllText}>View All</Text>
             </TouchableOpacity>
           </View>
@@ -108,36 +110,40 @@ export default function Dashboard() {
               <Text style={styles.emptyText}>No posts scheduled for today</Text>
               <TouchableOpacity 
                 style={styles.scheduleButton}
-                onPress={() => router.push('/compose')}
+                onPress={function() { router.push('/compose'); }}
               >
                 <MessageCircle size={16} color="#1DA1F2" />
                 <Text style={styles.scheduleButtonText}>Create Post</Text>
               </TouchableOpacity>
             </View>
           ) : (
-            todaysPosts.map((post) => (
-            <View key={post.id} style={styles.postCard}>
-              <View style={styles.postHeader}>
-                <View style={styles.postPlatform}>
-                  <View style={[styles.platformDot, { backgroundColor: '#1DA1F2' }]} />
-                  <Text style={styles.platformText}>
-                    {post.platforms.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(', ')}
-                  </Text>
+            todaysPosts.map(function(post) {
+              return (
+                <View key={post.id} style={styles.postCard}>
+                  <View style={styles.postHeader}>
+                    <View style={styles.postPlatform}>
+                      <View style={[styles.platformDot, { backgroundColor: '#1DA1F2' }]} />
+                      <Text style={styles.platformText}>
+                        {post.platforms.map(function(p) { 
+                          return p.charAt(0).toUpperCase() + p.slice(1); 
+                        }).join(', ')}
+                      </Text>
+                    </View>
+                    <View style={styles.postStatus}>
+                      {getStatusIcon(post.status)}
+                      <Text style={styles.postTime}>
+                        {post.scheduledTime?.toLocaleTimeString('en-US', { 
+                          hour: 'numeric', 
+                          minute: '2-digit',
+                          hour12: true 
+                        })}
+                      </Text>
+                    </View>
+                  </View>
+                  <Text style={styles.postContent}>{post.content}</Text>
                 </View>
-                <View style={styles.postStatus}>
-                  {getStatusIcon(post.status)}
-                  <Text style={styles.postTime}>
-                    {post.scheduledTime?.toLocaleTimeString('en-US', { 
-                      hour: 'numeric', 
-                      minute: '2-digit',
-                      hour12: true 
-                    })}
-                  </Text>
-                </View>
-              </View>
-              <Text style={styles.postContent}>{post.content}</Text>
-            </View>
-            ))
+              );
+            })
           )}
         </View>
 
@@ -146,21 +152,21 @@ export default function Dashboard() {
           <View style={styles.quickActions}>
             <TouchableOpacity 
               style={styles.actionButton}
-              onPress={() => router.push('/compose')}
+              onPress={function() { router.push('/compose'); }}
             >
               <MessageCircle size={20} color="#1DA1F2" />
               <Text style={styles.actionText}>New Post</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.actionButton}
-              onPress={() => router.push('/calendar')}
+              onPress={function() { router.push('/calendar'); }}
             >
               <Calendar size={20} color="#8B5CF6" />
               <Text style={styles.actionText}>Schedule</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.actionButton}
-              onPress={() => router.push('/analytics')}
+              onPress={function() { router.push('/analytics'); }}
             >
               <TrendingUp size={20} color="#10B981" />
               <Text style={styles.actionText}>Analytics</Text>
